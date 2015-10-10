@@ -20,7 +20,7 @@ all_count = 1950
 pages = all_count / per_page
 store = 'vacancies.h5'
 specialisation = '1.221'
-area = '2'
+area = '1'
 csv = specialisation + '.csv'
 
 
@@ -30,9 +30,10 @@ def update_data(path):
     if os.path.exists(csv):
         indexes = pd.read_csv(csv, sep=';', encoding='cp1251').id.tolist()
     while i <= pages:
-        i += 1
         paging = '&period=30&per_page={0}&page={1}&specialization={2}&area={3}'.format(per_page, i, specialisation, area)
+        i += 1
         request = url + '?' + path + paging
+        print(request)
         res = requests.get(request).text
         data = j.loads(res)
         vacancies = []
@@ -43,13 +44,15 @@ def update_data(path):
             res_v = requests.get(urlv['url']).text
             vacancie = convertJson(j.loads(res_v))
             index.append(vacancie['id'])
+            print(vacancie['key_skills'])
             vacancies.append(vacancie)
         reslut = pd.DataFrame(vacancies, index=index)
+        print(reslut['key_skills'])
         if os.path.exists(csv):
             reslut.to_csv(csv, sep=';', mode='a', header=False)
         else:
             reslut.to_csv(csv, sep=';', mode='a')
-        print('End update_data ' + i)
+        print('End update_data ' + str(i))
 
 
 def convertJson(json):
@@ -96,10 +99,10 @@ def show_key_skills():
     all_key_skills = ''.join((data['key_skills']).tolist())
     key_skill_pars = j.loads(all_key_skills.replace('\'', '\"').replace('[]', '').replace('][',','))
     result = pd.DataFrame(key_skill_pars)
-    print(result.name.groupby(result.name).count().order(ascending=False)[:10])
+    print(result.name.groupby(result.name).count().order(ascending=False)[:100])
 
 
 if __name__ == '__main__':
-    #show_key_skills()
-    update_data('')
+    show_key_skills()
+    #update_data('')
     #convertJson(j.loads(requests.get(url+'/'+str(14557264)).text))
