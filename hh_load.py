@@ -101,8 +101,16 @@ def show_key_skills():
     result = pd.DataFrame(key_skill_pars)
     print(result.name.groupby(result.name).count().order(ascending=False)[:100])
 
+def show_descriptions():
+    data = load_data(csv)
+    all_descriptions = ''.join((data['description']).tolist())
+    descriptions_pars = all_descriptions.split(' ')
+    result = pd.DataFrame(descriptions_pars)
+    print(result[0].groupby(result[0]).count().order(ascending=False)[:100])
+
 
 if __name__ == '__main__':
-    show_key_skills()
+    #show_key_skills()
+    show_descriptions()
     #update_data('')
     #convertJson(j.loads(requests.get(url+'/'+str(14557264)).text))
