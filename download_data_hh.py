@@ -1,24 +1,25 @@
 import json as j
-import os
 
 import pandas as pd
 import requests
+from sqlalchemy import create_engine
+from sqlalchemy.orm import mapper
+from sqlalchemy.orm import sessionmaker
+
+import create_db
+import vacancy
 
 __author__ = 'Loiso'
 
+mapper(vacancy.Vacancy, create_db.vacancies_table)
+engine = create_engine('postgresql://hh:USERPASS@192.168.40.131:5432/hh')
+Session = sessionmaker(bind=engine)
+session = Session()
 url = 'https://api.hh.ru/vacancies'
 columns = ['area', 'billing_type', 'city', 'created_at', 'description',
            'employer', 'employment', 'experience', 'id', 'key_skills', 'name',
            'published_at', 'salary_cur', 'salary_from', 'salary_to',
            'schedule', 'specializations', 'street', 'type']
-old_columns = ['accept_handicapped', 'allow_messages', 'alternate_url',
-       'apply_alternate_url', 'archived', 'area', 'area_id', 'billing_type',
-       'city', 'code', 'contacts', 'created_at',
-       'description', 'employer', 'employment', 'experience', 'hidden', 'id',
-       'key_skills', 'name', 'negotiations_url', 'premium', 'published_at',
-       'relations', 'response_letter_required', 'response_url', 'salary_cur',
-       'salary_from', 'salary_to', 'schedule', 'site', 'specializations',
-       'street', 'suitable_resumes_url', 'type']
 per_page = 50
 key = 'vacancies'
 specialisation = '1.221'
@@ -34,11 +35,7 @@ areas = ['1', '2114', '1620', '1624', '1646', '1652', '1192', '1124', '1146', '1
 
 def update_data(path, spec=specialisation, area_id=area):
     print('Start spec = ' + spec + ' area = ' + area_id)
-    csv = spec + '.csv'
     i = 0
-    indexes = []
-    if os.path.exists(csv):
-        indexes = pd.read_csv(csv, sep=';').id.tolist()
     condition = True
     while condition:
         paging = '&period=30&per_page={0}&page={1}&specialization={2}&area={3}'.format(per_page, i, spec,
@@ -48,33 +45,36 @@ def update_data(path, spec=specialisation, area_id=area):
         res = requests.get(request).text
         data = j.loads(res)
         pages = data['pages']
-        vacancies = []
-        index = []
         for urlv in data['items']:
-            if urlv['id'] in indexes:
-                continue
             res_v = requests.get(urlv['url']).text
-            vacancy = convertJson(j.loads(res_v))
-            index.append(vacancy['id'])
-            vacancies.append(vacancy)
-        result = pd.DataFrame(vacancies, index=index)
-        if os.path.exists(csv):
-            result.to_csv(csv, sep=';', mode='a', header=False)
-        else:
-            result.to_csv(csv, sep=';', mode='a')
+            vacancy_ = convert_json(j.loads(res_v))
+            session.merge(vacancy.Vacancy(vacancy_['id'], vacancy_['name'], vacancy_['created_at'],
+                                          vacancy_['published_at'], vacancy_['area'], vacancy_['city'],
+                                          vacancy_['street'], vacancy_['employer'], vacancy_['employment'],
+                                          vacancy_['experience'], vacancy_['description'], vacancy_['key_skills'],
+                                          vacancy_['salary_cur'], vacancy_['salary_from'], vacancy_['salary_to'],
+                                          vacancy_['schedule'], vacancy_['specializations'],
+                                          vacancy_['billing_type'], vacancy_['type']))
+        session.commit()
         print('End update_data ' + str(i))
         i += 1
         condition = (i <= pages - 1)
 
 
-def convertJson(json):
+def convert_json(json):
     series = pd.Series(json)
     if series['area']:
         series['area_id'] = series['area']['id']
-        series['area'] = series['area']['name']
+        if series['area']['name']:
+            series['area'] = series['area']['name']
+        else:
+            series['area'] = None
     if series['address']:
         series['city'] = series['address']['city']
         series['street'] = series['address']['street']
+    else:
+        series['city'] = None
+        series['street'] = None
     series.drop(['address'], inplace=True)
     if series['billing_type']:
         series['billing_type'] = series['billing_type']['name']
@@ -82,6 +82,10 @@ def convertJson(json):
         series['salary_from'] = series['salary']['from']
         series['salary_to'] = series['salary']['to']
         series['salary_cur'] = series['salary']['currency']
+    else:
+        series['salary_from'] = None
+        series['salary_to'] = None
+        series['salary_cur'] = None
     series.drop(['salary'], inplace=True)
     if series['employer']:
         series['employer'] = series['employer']['name']
@@ -105,6 +109,8 @@ def convertJson(json):
         series['relations'] = series['relations'].to_string()
     else:
         series['relations'] = ''
+    series['created_at'] = pd.to_datetime(series['created_at'])
+    series['published_at'] = pd.to_datetime(series['published_at'])
     series.drop(['test'], inplace=True)
     series.drop(['department'], inplace=True)
     series.drop(['branded_description'], inplace=True)
@@ -112,37 +118,11 @@ def convertJson(json):
     return series
 
 
-def load_data(path):
-    data = pd.DataFrame()
-    if os.path.exists(path):
-        data = pd.read_csv(path, sep=';')
-    print('End load_data')
-    return data
-
-
-def show_key_skills(path):
-    data = load_data(path)
-    all_key_skills = pd.DataFrame('|'.join(data['key_skills'].dropna()).split('|'))
-    print(all_key_skills[0].groupby(all_key_skills[0]).count().sort_values(ascending=False)[:20])
-
-
 def load_all_data_from_areas():
     for ar in areas:
         update_data('', area_id=ar)
 
 
-def show_descriptions(path):
-    data = load_data(path)
-    all_descriptions = ''.join((data['description']).tolist())
-    descriptions_pars = all_descriptions.split(' ')
-    result = pd.DataFrame(descriptions_pars)
-    print(result[0].groupby(result[0]).count().sort_values(ascending=False)[:20])
-
-
 if __name__ == '__main__':
-     load_all_data_from_areas()
-     show_key_skills('1.221.csv')
-    # show_descriptions()
-    # update_data('')
-     #update_data('', area_id='5')
-    # convertJson(j.loads(requests.get(url+'/'+str(14155307)).text))
+    load_all_data_from_areas()
+    #update_data('', area_id='97')
