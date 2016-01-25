@@ -1,7 +1,8 @@
 from sqlalchemy import Table, Column, Integer, String, MetaData, DateTime
 from sqlalchemy import create_engine
+from settings import dbserver
 
-engine = create_engine('postgresql://hh:USERPASS@192.168.40.131:5432/hh')
+engine = create_engine('postgresql://hh:USERPASS@%s:5432/hh' % dbserver)
 metadata = MetaData()
 vacancies_table = Table('vacancies', metadata,
                         Column('id', Integer, primary_key=True),

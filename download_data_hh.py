@@ -5,6 +5,7 @@ import requests
 from sqlalchemy import create_engine
 from sqlalchemy.orm import mapper
 from sqlalchemy.orm import sessionmaker
+from settings import dbserver
 
 import create_db
 import vacancy
@@ -12,7 +13,7 @@ import vacancy
 __author__ = 'Loiso'
 
 mapper(vacancy.Vacancy, create_db.vacancies_table)
-engine = create_engine('postgresql://hh:USERPASS@192.168.40.131:5432/hh')
+engine = create_engine('postgresql://hh:USERPASS@%s:5432/hh' % dbserver)
 Session = sessionmaker(bind=engine)
 session = Session()
 url = 'https://api.hh.ru/vacancies'
@@ -125,4 +126,4 @@ def load_all_data_from_areas():
 
 if __name__ == '__main__':
     load_all_data_from_areas()
-    #update_data('', area_id='97')
+    #update_data('', area_id='1624')

@@ -2,8 +2,9 @@ import pandas as pd
 from sqlalchemy import create_engine
 import nltk.stem
 import utils_hh
+from settings import dbserver
 
-engine = create_engine('postgresql://hh:USERPASS@192.168.40.131:5432/hh')
+engine = create_engine('postgresql://hh:USERPASS@%s:5432/hh' % dbserver)
 
 english_stemmer = nltk.stem.SnowballStemmer('english')
 russian_stemmer = nltk.stem.SnowballStemmer('russian')
