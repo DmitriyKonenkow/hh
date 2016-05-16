@@ -54,7 +54,7 @@ def update_data(path, spec=specialisation, area_id=area):
             if urlv['id'] in indexes:
                 continue
             res_v = requests.get(urlv['url']).text
-            vacancy = convertJson(j.loads(res_v))
+            vacancy = convert_json_vacancy(j.loads(res_v))
             index.append(vacancy['id'])
             vacancies.append(vacancy)
         result = pd.DataFrame(vacancies, index=index)
@@ -67,7 +67,13 @@ def update_data(path, spec=specialisation, area_id=area):
         condition = (i <= pages - 1)
 
 
-def convertJson(json):
+def load_vacancy(id):
+    res_v = requests.get(url+'/{}'.format(id)).text
+    vacancy = convert_json_vacancy(j.loads(res_v))
+    return vacancy
+
+
+def convert_json_vacancy(json):
     series = pd.Series(json)
     if series['area']:
         series['area_id'] = series['area']['id']
