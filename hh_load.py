@@ -3,6 +3,7 @@ import os
 
 import pandas as pd
 import requests
+from bs4 import BeautifulSoup
 
 __author__ = 'Loiso'
 
@@ -12,13 +13,13 @@ columns = ['area', 'billing_type', 'city', 'created_at', 'description',
            'published_at', 'salary_cur', 'salary_from', 'salary_to',
            'schedule', 'specializations', 'street', 'type']
 old_columns = ['accept_handicapped', 'allow_messages', 'alternate_url',
-       'apply_alternate_url', 'archived', 'area', 'area_id', 'billing_type',
-       'city', 'code', 'contacts', 'created_at',
-       'description', 'employer', 'employment', 'experience', 'hidden', 'id',
-       'key_skills', 'name', 'negotiations_url', 'premium', 'published_at',
-       'relations', 'response_letter_required', 'response_url', 'salary_cur',
-       'salary_from', 'salary_to', 'schedule', 'site', 'specializations',
-       'street', 'suitable_resumes_url', 'type']
+               'apply_alternate_url', 'archived', 'area', 'area_id', 'billing_type',
+               'city', 'code', 'contacts', 'created_at',
+               'description', 'employer', 'employment', 'experience', 'hidden', 'id',
+               'key_skills', 'name', 'negotiations_url', 'premium', 'published_at',
+               'relations', 'response_letter_required', 'response_url', 'salary_cur',
+               'salary_from', 'salary_to', 'schedule', 'site', 'specializations',
+               'street', 'suitable_resumes_url', 'type']
 per_page = 50
 key = 'vacancies'
 specialisation = '1.221'
@@ -68,7 +69,7 @@ def update_data(path, spec=specialisation, area_id=area):
 
 
 def load_vacancy(id):
-    res_v = requests.get(url+'/{}'.format(id)).text
+    res_v = requests.get(url + '/{}'.format(id)).text
     vacancy = convert_json_vacancy(j.loads(res_v))
     return vacancy
 
@@ -126,6 +127,17 @@ def load_data(path):
     return data
 
 
+def extract_description(string):
+    soup = BeautifulSoup(string, "lxml")
+    return soup.get_text()
+
+
+def extract_requirements(string):
+    soup = BeautifulSoup(string, "lxml")
+    list = [text.get_text() for text in soup.find(string='Требования:').find_next('ul').find_all('li')]
+    return list
+
+
 def show_key_skills(path):
     data = load_data(path)
     all_key_skills = pd.DataFrame('|'.join(data['key_skills'].dropna()).split('|'))
@@ -146,9 +158,9 @@ def show_descriptions(path):
 
 
 if __name__ == '__main__':
-     load_all_data_from_areas()
-     show_key_skills('1.221.csv')
+    load_all_data_from_areas()
+    show_key_skills('1.221.csv')
     # show_descriptions()
     # update_data('')
-     #update_data('', area_id='5')
+    # update_data('', area_id='5')
     # convertJson(j.loads(requests.get(url+'/'+str(14155307)).text))
