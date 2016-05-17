@@ -9,3 +9,8 @@
 * Кластеризация требований
 * Анализ востребованности знаний по определенным требованиям в кластерах вакансий
 * Веб интерфейс для приложения (?)
+
+Include data_files and work_data
+
+
+    mklink /D \work_data "d:\Yandex Disk\Programming\Python projects\hh\work_data\"
