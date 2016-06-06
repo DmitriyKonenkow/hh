@@ -166,7 +166,7 @@ def extract_requirements(string):
             list_req = soup_req.find_all_next('p')
         list = [text.get_text() for text in list_req]
     except AttributeError:
-        print('Unparsed string: ' + string)
+        #print('Unparsed string: ' + string)
         return []
     return list
 
