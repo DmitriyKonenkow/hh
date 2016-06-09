@@ -5,6 +5,7 @@ import pandas as pd
 from test_data import *
 
 import hh_load
+from nltk_tokenize import clear_text
 
 work_data = '../work_data/'
 
@@ -72,6 +73,12 @@ class ExtractDescr(unittest.TestCase):
         desc = pd.DataFrame(list_desc)
         desc.to_pickle(work_data + 'descr_cl.pkl')
 
+
+class TokenizeText(unittest.TestCase):
+    def runTest(self):
+        text = vacancy_description_extracted
+        clear_text = clear_text(text)
+        print(clear_text)
 
 if __name__ == '__main__':
     unittest.main()
