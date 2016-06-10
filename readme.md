@@ -14,3 +14,10 @@ Include data_files and work_data
 
 
     mklink /D \work_data "d:\Yandex Disk\Programming\Python projects\hh\work_data\"
+    
+    
+    Требования:  Уверенное знание Java SE (опыт работы от 2 лет). 
+    Знание технологии Swing. 
+    Опыт работы в Linux. 
+    Работа с системами контроля версий (SVN). 
+    Умение разбираться в чужом коде и модифицировать его.
