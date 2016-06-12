@@ -24,3 +24,9 @@ class Vacancy(object):
 
     def __repr__(self):
         return "<Vacancy('%s','%s')>" % (self.id, self.name)
+
+
+class Dirty(object):
+    def __init__(self, id, data):
+        self.id = id
+        self.data = data

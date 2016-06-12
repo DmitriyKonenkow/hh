@@ -1,8 +1,6 @@
-from sqlalchemy import Table, Column, Integer, String, MetaData, DateTime
-from sqlalchemy import create_engine
-from settings import dbserver
+from sqlalchemy import Table, Column, Integer, String, MetaData, DateTime, Text
+from  settings import engine
 
-engine = create_engine('postgresql://hh:USERPASS@%s:5432/hh' % dbserver)
 metadata = MetaData()
 vacancies_table = Table('vacancies', metadata,
                         Column('id', Integer, primary_key=True),
@@ -24,4 +22,7 @@ vacancies_table = Table('vacancies', metadata,
                         Column('specializations', String),
                         Column('billing_type', String),
                         Column('type', String))
+dirty_vacancies_table = Table('dirty_data', metadata,
+                              Column('id', Integer, primary_key=True),
+                              Column('data', Text))
 metadata.create_all(engine)
