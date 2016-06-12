@@ -1,7 +1,9 @@
 from sqlalchemy import Table, Column, Integer, String, MetaData, DateTime, Text
-from  settings import engine
+
+from settings import engine
 
 metadata = MetaData()
+
 vacancies_table = Table('vacancies', metadata,
                         Column('id', Integer, primary_key=True),
                         Column('name', String),
@@ -22,7 +24,10 @@ vacancies_table = Table('vacancies', metadata,
                         Column('specializations', String),
                         Column('billing_type', String),
                         Column('type', String))
+
 dirty_vacancies_table = Table('dirty_data', metadata,
                               Column('id', Integer, primary_key=True),
                               Column('data', Text))
-metadata.create_all(engine)
+
+if __name__ == '__main__':
+    metadata.create_all(engine)
