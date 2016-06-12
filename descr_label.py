@@ -2,9 +2,9 @@ import pprint
 
 import pandas as pd
 from gensim import corpora, models
-
-import hh_load
 from nltk_tokenize import clear_text
+
+from old import hh_load
 from tests.test_data import vacancy_description
 
 pp = pprint.PrettyPrinter()

@@ -4,8 +4,7 @@ import unittest
 import pandas as pd
 from test_data import *
 
-import hh_load
-from nltk_tokenize import clear_text
+from old import hh_load
 
 work_data = '../work_data/'
 
