@@ -12,6 +12,7 @@ import sql_mapper
 from settings import *
 
 mapper(sql_mapper.Dirty, create_db.dirty_vacancies_table)
+mapper(sql_mapper.Status, create_db.status_parse)
 
 Session = sessionmaker(bind=engine)
 session = Session()
@@ -34,6 +35,7 @@ def update_data(path, spec=specialisation, area_id=area):
             if session.query(sql_mapper.Dirty).get(uid) is None:
                 res_v = requests.get(urlv['url']).text
                 session.merge(sql_mapper.Dirty(uid, res_v))
+                session.merge(sql_mapper.Status(uid, 1))
         session.commit()
         print('End update_data ' + str(i))
         i += 1

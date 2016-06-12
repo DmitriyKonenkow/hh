@@ -30,3 +30,9 @@ class Dirty(object):
     def __init__(self, id, data):
         self.id = id
         self.data = data
+
+
+class Status(object):
+    def __init__(self, id, status):
+        self.id = id
+        self.status = status

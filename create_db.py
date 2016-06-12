@@ -29,5 +29,9 @@ dirty_vacancies_table = Table('dirty_data', metadata,
                               Column('id', Integer, primary_key=True),
                               Column('data', Text))
 
+status_parse = Table('status_parse', metadata,
+                     Column('id', Integer, primary_key=True),
+                     Column('status', Integer))
+
 if __name__ == '__main__':
     metadata.create_all(engine)
