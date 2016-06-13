@@ -1,9 +1,34 @@
-from sqlalchemy.orm import mapper
+from sqlalchemy import Column, Integer, String, DateTime, Text
+from sqlalchemy.ext.declarative import declarative_base
 
-import create_db
+from settings import engine
+
+Base = declarative_base()
 
 
-class Vacancy(object):
+class Vacancy(Base):
+    __tablename__ = 'vacancies'
+
+    id = Column('id', Integer, primary_key=True)
+    name = Column('name', String)
+    created_at = Column('created_at', DateTime)
+    published_at = Column('published_at', DateTime)
+    area = Column('area', String)
+    city = Column('city', String)
+    street = Column('street', String)
+    employer = Column('employer', String)
+    employment = Column('employment', String)
+    experience = Column('experience', String)
+    description = Column('description', String)
+    key_skills = Column('key_skills', String)
+    salary_cur = Column('salary_cur', String)
+    salary_from = Column('salary_from', String)
+    salary_to = Column('salary_to', String)
+    schedule = Column('schedule', String)
+    specializations = Column('specializations', String)
+    billing_type = Column('billing_type', String)
+    type = Column('type', String)
+
     def __init__(self, id, name, created_at, published_at, area, city,
                  street, employer, employment, experience, description, key_skills,
                  salary_cur, salary_from, salary_to, schedule, specializations, billing_type, type):
@@ -27,22 +52,38 @@ class Vacancy(object):
         self.billing_type = billing_type
         self.type = type
 
-    def __repr__(self):
-        return "<Vacancy('%s','%s')>" % (self.id, self.name)
 
+class Dirty(Base):
+    __tablename__ = 'status_parse'
 
-class Dirty(object):
+    id = Column('id', Integer, primary_key=True)
+    data = Column('data', Text)
+
     def __init__(self, id, data):
         self.id = id
         self.data = data
 
 
-class Status(object):
+class Status(Base):
+    __tablename__ = 'dirty_data'
+
+    id = Column('id', Integer, primary_key=True)
+    status = Column('status', Integer)
+
     def __init__(self, id, status):
         self.id = id
         self.status = status
 
 
-mapper(Vacancy, create_db.vacancies_table)
-mapper(Status, create_db.status_parse)
-mapper(Dirty, create_db.dirty_vacancies_table)
+class KeySkills(Base):
+    __tablename__ = 'key_skills'
+
+    id = Column('id', Integer, primary_key=True)
+    name = Column('name', String(32))
+
+    def __init__(self, id, name):
+        self.id = id
+        self.name = name
+
+if __name__ == '__main__':
+    Base.metadata.create_all(engine)
