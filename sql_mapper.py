@@ -1,3 +1,8 @@
+from sqlalchemy.orm import mapper
+
+import create_db
+
+
 class Vacancy(object):
     def __init__(self, id, name, created_at, published_at, area, city,
                  street, employer, employment, experience, description, key_skills,
@@ -36,3 +41,8 @@ class Status(object):
     def __init__(self, id, status):
         self.id = id
         self.status = status
+
+
+mapper(Vacancy, create_db.vacancies_table)
+mapper(Status, create_db.status_parse)
+mapper(Dirty, create_db.dirty_vacancies_table)

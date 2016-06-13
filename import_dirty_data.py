@@ -5,21 +5,17 @@
 import json as j
 
 import requests
-from sqlalchemy.orm import sessionmaker, mapper
+from sqlalchemy.orm import sessionmaker
 
-import create_db
 import sql_mapper
 from settings import *
-
-mapper(sql_mapper.Dirty, create_db.dirty_vacancies_table)
-mapper(sql_mapper.Status, create_db.status_parse)
 
 Session = sessionmaker(bind=engine)
 session = Session()
 
 
 def update_data(path, spec=specialisation, area_id=area):
-    print('Start spec = ' + spec + ' area = ' + area_id)
+    print('Start spec = {} area = {}'.format(spec, area_id))
     i = 0
     condition = True
     while condition:
@@ -43,8 +39,11 @@ def update_data(path, spec=specialisation, area_id=area):
 
 
 def load_all_data_from_areas():
+    count = len(areas)
     for ar in areas:
         update_data('', area_id=ar)
+        count -= 1
+        print('left areas to load {}'.format(count))
 
 
 if __name__ == '__main__':
