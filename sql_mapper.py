@@ -1,5 +1,6 @@
-from sqlalchemy import Column, Integer, String, DateTime, Text
+from sqlalchemy import Column, Integer, String, DateTime, Text, Boolean, ForeignKey
 from sqlalchemy.ext.declarative import declarative_base
+from sqlalchemy.orm import relationship
 
 from settings import engine
 
@@ -28,6 +29,7 @@ class Vacancy(Base):
     specializations = Column('specializations', String)
     billing_type = Column('billing_type', String)
     type = Column('type', String)
+    keys = relationship('KeySkills', secondary='vacancy_to_key')
 
     def __init__(self, id, name, created_at, published_at, area, city,
                  street, employer, employment, experience, description, key_skills,
@@ -54,7 +56,7 @@ class Vacancy(Base):
 
 
 class Dirty(Base):
-    __tablename__ = 'status_parse'
+    __tablename__ = 'dirty_data'
 
     id = Column('id', Integer, primary_key=True)
     data = Column('data', Text)
@@ -65,7 +67,7 @@ class Dirty(Base):
 
 
 class Status(Base):
-    __tablename__ = 'dirty_data'
+    __tablename__ = 'status_parse'
 
     id = Column('id', Integer, primary_key=True)
     status = Column('status', Integer)
@@ -80,10 +82,28 @@ class KeySkills(Base):
 
     id = Column('id', Integer, primary_key=True)
     name = Column('name', String(32))
+    define = Column('define', Boolean, default=False)
 
-    def __init__(self, id, name):
+    def __init__(self, id, name, define):
         self.id = id
         self.name = name
+        self.define = define
+
+    @classmethod
+    def init_from_session(cls, session, name, define=True):
+        obj = session.query(KeySkills).filter_by(name=name).first()
+        uid = None
+        if obj:
+            uid = obj.id
+        return cls(uid, name, define)
+
+
+class VacancyToKey(Base):
+    __tablename__ = 'vacancy_to_key'
+
+    vacancy_id = Column(Integer, ForeignKey('vacancies.id'), primary_key=True)
+    key_id = Column(Integer, ForeignKey('key_skills.id'), primary_key=True)
+
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)

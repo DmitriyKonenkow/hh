@@ -19,13 +19,19 @@ def parse_data():
             uid = d_s.id
             dirty_vc = session.query(sql_mapper.Dirty).get(uid)
             vacancy_ = convert_json(j.loads(dirty_vc.data))
-            session.merge(sql_mapper.Vacancy(vacancy_['id'], vacancy_['name'], vacancy_['created_at'],
-                                             vacancy_['published_at'], vacancy_['area'], vacancy_['city'],
-                                             vacancy_['street'], vacancy_['employer'], vacancy_['employment'],
-                                             vacancy_['experience'], vacancy_['description'], vacancy_['key_skills'],
-                                             vacancy_['salary_cur'], vacancy_['salary_from'], vacancy_['salary_to'],
-                                             vacancy_['schedule'], vacancy_['specializations'],
-                                             vacancy_['billing_type'], vacancy_['type']))
+
+            vacancy = sql_mapper.Vacancy(vacancy_['id'], vacancy_['name'], vacancy_['created_at'],
+                                         vacancy_['published_at'], vacancy_['area'], vacancy_['city'],
+                                         vacancy_['street'], vacancy_['employer'], vacancy_['employment'],
+                                         vacancy_['experience'], vacancy_['description'], vacancy_['key_skills'],
+                                         vacancy_['salary_cur'], vacancy_['salary_from'], vacancy_['salary_to'],
+                                         vacancy_['schedule'], vacancy_['specializations'],
+                                         vacancy_['billing_type'], vacancy_['type'])
+            if len(vacancy_['key_skills']):
+                key_skills = vacancy_['key_skills'].split('|')
+                for key_ in key_skills:
+                    vacancy.keys.append(sql_mapper.KeySkills.init_from_session(session, key_))
+            session.merge(vacancy)
             session.merge((sql_mapper.Status(d_s.id, 2)))
         session.commit()
         dirty_status = status_query.all()
