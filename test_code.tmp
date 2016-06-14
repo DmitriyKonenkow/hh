@@ -1,0 +1,1 @@
+data.pivot(index= 'vacancy_id', columns = 'key_id', values = 'val')
