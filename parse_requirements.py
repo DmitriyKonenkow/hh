@@ -63,7 +63,7 @@ def extract_requirements(string):
         result = []
         for item in text_list:
             item = item.lower()
-            result.extend([x.strip() for x in filter(lambda x: len(x) > 1, re.split(',|;| и |/', item))])
+            result.extend([x.strip() for x in filter(lambda x: len(x) > 1, re.split(',|;| и |/| или ', item))])
     except AttributeError:
         # print('Unparsed string: ' + string)
         return []
