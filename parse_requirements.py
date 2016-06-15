@@ -11,7 +11,7 @@ session = Session()
 
 
 def parse_description():
-    status_to_parse = session.query(sql_mapper.Status).filter(sql_mapper.Status.status == LOAD).limit(100)
+    status_to_parse = session.query(sql_mapper.Status).filter(sql_mapper.Status.status == LOAD).limit(500)
     to_parse = status_to_parse.all()
     while len(to_parse) > 0:
         for p_s in to_parse:
@@ -62,7 +62,8 @@ def extract_requirements(string):
         text_list = [text.get_text() for text in list_req]
         result = []
         for item in text_list:
-            result.extend(filter(lambda x: len(x) > 1, re.split(',|;| и |/', item)))
+            item = item.lower()
+            result.extend([x.strip() for x in filter(lambda x: len(x) > 1, re.split(',|;| и |/', item))])
     except AttributeError:
         # print('Unparsed string: ' + string)
         return []

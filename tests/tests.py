@@ -41,8 +41,8 @@ class ExtractRequirementsFromVacancy(unittest.TestCase):
 class ExtractRequirementsFromVacancy1(unittest.TestCase):
     def runTest(self):
         result = extract_requirements(vacancy_description1)
-        self.assertEquals(5, len(result), 'incorrect parse requirements from vacancy description')
-        self.assertEquals('- опыт программирования С++', result[0],
+        self.assertEquals(7, len(result), 'incorrect parse requirements from vacancy description')
+        self.assertEquals('- опыт программирования с++', result[0],
                           'incorrect parse requirements from vacancy description')
 
 

@@ -43,7 +43,7 @@ def load_labels(file):
 
 rus_stemmer = nltk.stem.snowball.RussianStemmer()
 stop = stopwords.words('russian')
-
+stop.extend(['знан', 'умен'])
 
 class StemmedTfidfVectorizer(TfidfVectorizer):
     def build_analyzer(self):
