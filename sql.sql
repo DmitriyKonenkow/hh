@@ -53,11 +53,11 @@ FROM (SELECT
         count(*) AS count
       FROM requirements
       WHERE cluster IS NOT NULL
-      GROUP BY requirement, cluster)
+      GROUP BY requirement, cluster
+      ORDER BY count DESC )
 GROUP BY cluster
-ORDER BY max_count
-  DESC;
+ORDER BY max_count DESC ;
 
 UPDATE requirements
 SET cluster = NULL
-WHERE cluster is NOT NULL ;
+WHERE cluster IS NOT NULL;

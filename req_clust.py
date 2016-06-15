@@ -1,5 +1,5 @@
 import pandas as pd
-from sklearn.cluster import MiniBatchKMeans, DBSCAN
+from sklearn.cluster import DBSCAN, MeanShift, KMeans,AffinityPropagation,MiniBatchKMeans, Birch
 from sqlalchemy.orm import sessionmaker
 
 import sql_mapper
@@ -16,8 +16,10 @@ def cluster_req():
     req = pd.read_sql(select_req_to_cluster, engine, index_col='id')
     vectorizer = StemmedTfidfVectorizer(min_df=1, decode_error='ignore', stop_words=stop)
     x_train_tfidf = vectorizer.fit_transform(req['requirement'])
-    #model = MiniBatchKMeans(n_clusters=100, batch_size=20000)
-    model = DBSCAN(eps=0.3, min_samples=100)
+    # model = MiniBatchKMeans(n_clusters=100, batch_size=20000)
+    model = Birch(branching_factor=50, n_clusters=None, threshold=0.5, compute_labels=True)
+    # model = AffinityPropagation()
+    # model = MeanShift()
     req['cluster'] = model.fit_predict(x_train_tfidf)
     count = len(req)
     print('Item to save {}'.format(count))
