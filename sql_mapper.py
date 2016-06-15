@@ -119,12 +119,14 @@ class Requirements(Base):
     id = Column('id', Integer, primary_key=True)
     vacancy_id = Column(Integer, ForeignKey('vacancies.id'))
     requirement = Column('requirement', String(128))
+    cluster = Column('cluster', Integer)
     key_req_id = Column(Integer, ForeignKey('key_requirement.id'))
 
-    def __init__(self, id, vacancy_id, requirement, key_req_id=None):
+    def __init__(self, id, vacancy_id, requirement, cluster=None, key_req_id=None):
         self.id = id
         self.vacancy_id = vacancy_id
         self.requirement = requirement
+        self.cluster = cluster
         self.key_req_id = key_req_id
 
 

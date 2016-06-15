@@ -62,7 +62,7 @@ def extract_requirements(string):
         text_list = [text.get_text() for text in list_req]
         result = []
         for item in text_list:
-            result.extend(filter(lambda x: len(x) > 1, re.split(',|;', item)))
+            result.extend(filter(lambda x: len(x) > 1, re.split(',|;| и |/', item)))
     except AttributeError:
         # print('Unparsed string: ' + string)
         return []
