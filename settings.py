@@ -3,6 +3,11 @@ from sqlalchemy import create_engine
 """ DB """
 engine = create_engine('sqlite+pysqlite:///work_data/hh.db')
 
+""" status """
+NEW = '1'
+LOAD = '2'
+PARSE_REQ = '3'
+
 """ Import data """
 url = 'https://api.hh.ru/vacancies'
 per_page = 50

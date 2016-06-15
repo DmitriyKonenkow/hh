@@ -118,7 +118,14 @@ class Requirements(Base):
 
     id = Column('id', Integer, primary_key=True)
     vacancy_id = Column(Integer, ForeignKey('vacancies.id'))
+    requirement = Column('requirement', String(128))
     key_req_id = Column(Integer, ForeignKey('key_requirement.id'))
+
+    def __init__(self, id, vacancy_id, requirement, key_req_id=None):
+        self.id = id
+        self.vacancy_id = vacancy_id
+        self.requirement = requirement
+        self.key_req_id = key_req_id
 
 
 if __name__ == '__main__':

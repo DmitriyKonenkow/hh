@@ -5,6 +5,7 @@ import pandas as pd
 from test_data import *
 
 from old import hh_load
+from parse_requirements import extract_requirements
 
 work_data = '../work_data/'
 
@@ -39,9 +40,9 @@ class ExtractRequirementsFromVacancy(unittest.TestCase):
 
 class ExtractRequirementsFromVacancy1(unittest.TestCase):
     def runTest(self):
-        result = hh_load.extract_requirements(vacancy_description1)
-        self.assertEquals(3, len(result), 'incorrect parse requirements from vacancy description')
-        self.assertEquals('- опыт программирования С++, желательно С#, VBA;', result[0],
+        result = extract_requirements(vacancy_description1)
+        self.assertEquals(5, len(result), 'incorrect parse requirements from vacancy description')
+        self.assertEquals('- опыт программирования С++', result[0],
                           'incorrect parse requirements from vacancy description')
 
 
@@ -72,12 +73,6 @@ class ExtractDescr(unittest.TestCase):
         desc = pd.DataFrame(list_desc)
         desc.to_pickle(work_data + 'descr_cl.pkl')
 
-
-class TokenizeText(unittest.TestCase):
-    def runTest(self):
-        text = vacancy_description_extracted
-        clear_text = clear_text(text)
-        print(clear_text)
 
 if __name__ == '__main__':
     unittest.main()
