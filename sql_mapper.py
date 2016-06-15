@@ -105,5 +105,21 @@ class VacancyToKey(Base):
     key_id = Column(Integer, ForeignKey('key_skills.id'), primary_key=True)
 
 
+class KeyRequirement(Base):
+    __tablename__ = 'key_requirement'
+
+    id = Column('id', Integer, primary_key=True)
+    name = Column('name', String(32))
+    parent_id = Column(Integer, ForeignKey('key_requirement.id'))
+
+
+class Requirements(Base):
+    __tablename__ = 'requirements'
+
+    id = Column('id', Integer, primary_key=True)
+    vacancy_id = Column(Integer, ForeignKey('vacancies.id'))
+    key_req_id = Column(Integer, ForeignKey('key_requirement.id'))
+
+
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
