@@ -74,16 +74,16 @@ GROUP BY r.cluster
 ORDER BY cluster_count
   DESC;
 UPDATE requirements
-SET key_req_id = 0
-WHERE cluster = 0;
-INSERT INTO key_requirement (name) VALUES ('архитектура приложения');
+SET key_req_id = 28
+WHERE cluster = 106;
+INSERT INTO key_requirement (name) VALUES ('asp.net');
 
 SELECT
   cluster,
   requirement,
   count(requirement) AS count
 FROM requirements
-WHERE cluster = 0
+WHERE cluster = 106
 GROUP BY cluster, requirement
 ORDER BY count
   DESC;
