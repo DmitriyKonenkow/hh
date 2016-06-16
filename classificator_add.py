@@ -21,7 +21,7 @@ select_labels = """
 SELECT
     vacancy_id,
     k.name
-    FROM vacancy_to_key vk JOIN key_skills k on vk.key_id = k.id
+    FROM vacancy_to_key vk JOIN key_skills k ON vk.key_id = k.id
     WHERE key_id IN (3, 9, 11, 14, 10, 5, 99, 6, 16, 51, 19);
 """
 
@@ -43,12 +43,13 @@ def load_labels(file):
 
 rus_stemmer = nltk.stem.snowball.RussianStemmer()
 stop = stopwords.words('russian')
-stop.extend(['знан', 'умен'])
+stop.extend(['знан', 'умен', 'оп', 'работ', 'разработк', 'принцип', 'платформ'])
+
 
 class StemmedTfidfVectorizer(TfidfVectorizer):
     def build_analyzer(self):
         analyzer = super(StemmedTfidfVectorizer, self).build_analyzer()
-        return lambda doc: (rus_stemmer.stem(w) for w in analyzer(doc))
+        return lambda doc: filter(lambda x: x not in stop, (rus_stemmer.stem(w) for w in analyzer(doc.replace('c#', 'c_sharp').replace('c++', 'c_plus_plus'))))
 
 
 def learn_vectorizer(vectorizer, x):

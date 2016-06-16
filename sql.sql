@@ -44,19 +44,53 @@ SET status = 2
 WHERE status = 3;
 
 SELECT
-  requirement,
-  cluster,
-  max(count) AS max_count
+  r.requirement,
+  r.cluster,
+  max(r.count) AS max_count_req,
+  cluster_count,
+  r.key_req_id,
+  kr.name
 FROM (SELECT
         requirement,
+        key_req_id,
         cluster,
         count(*) AS count
       FROM requirements
       WHERE cluster IS NOT NULL
-      GROUP BY requirement, cluster
-      ORDER BY count DESC )
-GROUP BY cluster
-ORDER BY max_count DESC ;
+      GROUP BY requirement, cluster, key_req_id
+      ORDER BY count
+        DESC) r
+  JOIN (SELECT
+          cluster,
+          count(*) AS cluster_count
+        FROM requirements
+        WHERE cluster IS NOT NULL
+        GROUP BY cluster
+        ORDER BY cluster_count
+          DESC) c ON r.cluster = c.cluster
+  LEFT JOIN key_requirement kr ON r.key_req_id = kr.id
+  WHERE r.key_req_id is NULL
+GROUP BY r.cluster
+ORDER BY cluster_count
+  DESC;
+UPDATE requirements
+SET key_req_id = 0
+WHERE cluster = 0;
+INSERT INTO key_requirement (name) VALUES ('архитектура приложения');
+
+SELECT
+  cluster,
+  requirement,
+  count(requirement) AS count
+FROM requirements
+WHERE cluster = 0
+GROUP BY cluster, requirement
+ORDER BY count
+  DESC;
+
+
+SELECT count(DISTINCT cluster)
+FROM requirements;
 
 UPDATE requirements
 SET cluster = NULL
