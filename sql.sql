@@ -69,21 +69,18 @@ FROM (SELECT
         ORDER BY cluster_count
           DESC) c ON r.cluster = c.cluster
   LEFT JOIN key_requirement kr ON r.key_req_id = kr.id
-  WHERE r.key_req_id is NULL
+WHERE r.key_req_id IS NULL
 GROUP BY r.cluster
 ORDER BY cluster_count
   DESC;
-UPDATE requirements
-SET key_req_id = 28
-WHERE cluster = 106;
-INSERT INTO key_requirement (name) VALUES ('asp.net');
+
 
 SELECT
   cluster,
   requirement,
   count(requirement) AS count
 FROM requirements
-WHERE cluster = 106
+WHERE cluster = 10
 GROUP BY cluster, requirement
 ORDER BY count
   DESC;
@@ -95,3 +92,48 @@ FROM requirements;
 UPDATE requirements
 SET cluster = NULL
 WHERE cluster IS NOT NULL;
+
+
+SELECT
+  r.requirement,
+  count(v.id) AS count
+FROM requirements r
+  JOIN vacancies v ON r.vacancy_id = v.id
+  LEFT JOIN requirements r1 ON v.id = r1.vacancy_id
+WHERE
+  r1.requirement LIKE '%машинн%'
+                          COLLATE NOCASE
+GROUP BY r.requirement
+ORDER BY count
+  DESC;
+
+SELECT *
+FROM requirements
+WHERE requirement like '%машинное%';
+
+UPDATE requirements
+SET key_req_id = 7
+WHERE cluster = 139;
+INSERT INTO key_requirement (name) VALUES ('tls');
+SELECT c.cluster, c.cluster_count, r.requirement, r.count
+from (SELECT
+        requirement,
+        key_req_id,
+        cluster,
+        count(*) AS count
+      FROM requirements
+      WHERE cluster IS NOT NULL
+      GROUP BY requirement, cluster, key_req_id
+      ORDER BY count
+        DESC) r JOIN
+  (SELECT
+     cluster,
+     count(*) AS cluster_count
+   FROM requirements
+   WHERE cluster IS NOT NULL
+         and key_req_id is NULL
+   GROUP BY cluster
+   ORDER BY cluster_count
+     DESC
+   LIMIT 1) c on c.cluster = r.cluster
+LIMIT 20;

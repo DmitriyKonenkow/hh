@@ -19,11 +19,11 @@ stop_words = stopwords.words('russian') + stopwords.words('english') \
                 'технологий','задачи','оформление','принципов','системы','программирования','навыки','уровне','data',
                 'плюсом','офисе','системами','языков','график','end','работу','company','code','good','projects',
                 'new','бизнес','разработке','developer','языка','программного','world','years','решений','кода','роста',
-                'strong','ciklum','applications','social','time','understanding']
+                'strong','ciklum','applications','social','time','understanding','application']
 
 
 def top_words(word):
-    descr = session.query(Vacancy.description).filter(Vacancy.description.ilike('%{}%'.format(word))).all()
+    descr = session.query(Vacancy.description).filter(Vacancy.description.ilike('%{}%'.format(word)), Vacancy.salary_cur=='RUR', Vacancy.salary_from > 100000).all()
     vectorizer = CountVectorizer(stop_words=stop_words)
     result = vectorizer.fit_transform([extract_description(r) for r, in descr])
     vocabulary = pd.Series(vectorizer.vocabulary_)
