@@ -110,6 +110,7 @@ class KeyRequirement(Base):
 
     id = Column('id', Integer, primary_key=True)
     name = Column('name', String(32))
+    regexp = Column('regex', String(1024))
     parent_id = Column(Integer, ForeignKey('key_requirement.id'))
 
 

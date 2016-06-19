@@ -34,13 +34,13 @@ def get_test_data(learn_vect=0):
 def predict_labels(string):
     vect_str = vectorizer.transform([string])
     labels_id = clf.predict(vect_str)
-    return labels[np.where(labels_id[0] == 1)[0]]
+    return labels[[np.where(labels_id[0] == 1)[0]]]
 
 
 if __name__ == '__main__':
     pass
-    #x, y = get_test_data(learn_vect=1)
-    #learn_clf(clf, x, y)
+    x, y = get_test_data(learn_vect=1)
+    learn_clf(clf, x, y)
     print(predict_labels("sql"))
     # learn_clf():
     # print(get_test_data())

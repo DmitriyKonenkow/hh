@@ -19,7 +19,7 @@ stop_words = stopwords.words('russian') + stopwords.words('english') \
                 'технологий','задачи','оформление','принципов','системы','программирования','навыки','уровне','data',
                 'плюсом','офисе','системами','языков','график','end','работу','company','code','good','projects',
                 'new','бизнес','разработке','developer','языка','программного','world','years','решений','кода','роста',
-                'strong','ciklum','applications','social','time','understanding','application']
+                'strong','ciklum','applications','social','time','understanding','application', 'это']
 
 
 def top_words(word):

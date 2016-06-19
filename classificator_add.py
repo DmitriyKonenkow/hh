@@ -13,16 +13,14 @@ SELECT
   DISTINCT v.id,
   v.description
 FROM vacancies v
-  JOIN vacancy_to_key vk ON v.id = vk.vacancy_id
-WHERE key_id IN (3, 9, 11, 14, 10, 5, 99, 6, 16, 51, 19);
+  JOIN vacancy_to_key_req vkr ON v.id = vkr.vacancy_id
 
 """
 select_labels = """
 SELECT
-    vacancy_id,
-    k.name
-    FROM vacancy_to_key vk JOIN key_skills k ON vk.key_id = k.id
-    WHERE key_id IN (3, 9, 11, 14, 10, 5, 99, 6, 16, 51, 19);
+    vkr.vacancy_id,
+    kr.name
+    FROM vacancy_to_key_req vkr JOIN key_requirement kr ON vkr.key_id = kr.id
 """
 
 
@@ -49,7 +47,8 @@ stop.extend(['знан', 'умен', 'оп', 'работ', 'разработк',
 class StemmedTfidfVectorizer(TfidfVectorizer):
     def build_analyzer(self):
         analyzer = super(StemmedTfidfVectorizer, self).build_analyzer()
-        return lambda doc: filter(lambda x: x not in stop, (rus_stemmer.stem(w) for w in analyzer(doc.replace('c#', 'c_sharp').replace('c++', 'c_plus_plus'))))
+        return lambda doc: filter(lambda x: x not in stop, (rus_stemmer.stem(w) for w in analyzer(
+            doc.replace('c#', 'c_sharp').replace('c++', 'c_plus_plus'))))
 
 
 def learn_vectorizer(vectorizer, x):

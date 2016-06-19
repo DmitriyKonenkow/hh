@@ -68,7 +68,7 @@ FROM (SELECT
         GROUP BY cluster
         ORDER BY cluster_count
           DESC) c ON r.cluster = c.cluster
-  LEFT JOIN key_requirement kr ON r.key_req_id = kr.id
+  LEFT JOIN _key_requirement kr ON r.key_req_id = kr.id
 WHERE r.key_req_id IS NULL
 GROUP BY r.cluster
 ORDER BY cluster_count
@@ -114,7 +114,7 @@ WHERE requirement LIKE '%машинное%';
 UPDATE requirements
 SET key_req_id = 7
 WHERE cluster = 139;
-INSERT INTO key_requirement (name) VALUES ('tls');
+INSERT INTO _key_requirement (name) VALUES ('tls');
 SELECT
   c.cluster,
   c.cluster_count,
@@ -178,4 +178,15 @@ WHERE key_id = 3;
 SELECT count(*)
 FROM vacancy_to_key_req;
 
+INSERT INTO vacancy_to_key_req (vacancy_id, key_id, checked)
+SELECT v.id, 67 as key_id, 1
+FROM vacancies v
+WHERE description like '%maven%'
+      AND v.id NOT IN (
+  SELECT vacancy_id
+  FROM vacancy_to_key_req
+  WHERE key_id = 67
+)
 
+
+drop TABLE _key_requirement
