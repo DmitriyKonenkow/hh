@@ -130,5 +130,13 @@ class Requirements(Base):
         self.key_req_id = key_req_id
 
 
+class VacancyToKeyReq(Base):
+    __tablename__ = 'vacancy_to_key_req'
+
+    vacancy_id = Column(Integer, ForeignKey('vacancies.id'), primary_key=True)
+    key_id = Column(Integer, ForeignKey('key_requirement.id'), primary_key=True)
+    checked = Column('checked', Boolean)
+
+
 if __name__ == '__main__':
     Base.metadata.create_all(engine)

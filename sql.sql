@@ -102,21 +102,25 @@ FROM requirements r
   LEFT JOIN requirements r1 ON v.id = r1.vacancy_id
 WHERE
   r1.requirement LIKE '%машинн%'
-                          COLLATE NOCASE
+                      COLLATE NOCASE
 GROUP BY r.requirement
 ORDER BY count
   DESC;
 
 SELECT *
 FROM requirements
-WHERE requirement like '%машинное%';
+WHERE requirement LIKE '%машинное%';
 
 UPDATE requirements
 SET key_req_id = 7
 WHERE cluster = 139;
 INSERT INTO key_requirement (name) VALUES ('tls');
-SELECT c.cluster, c.cluster_count, r.requirement, r.count
-from (SELECT
+SELECT
+  c.cluster,
+  c.cluster_count,
+  r.requirement,
+  r.count
+FROM (SELECT
         requirement,
         key_req_id,
         cluster,
@@ -125,15 +129,53 @@ from (SELECT
       WHERE cluster IS NOT NULL
       GROUP BY requirement, cluster, key_req_id
       ORDER BY count
-        DESC) r JOIN
+        DESC) r
+  JOIN
   (SELECT
      cluster,
      count(*) AS cluster_count
    FROM requirements
    WHERE cluster IS NOT NULL
-         and key_req_id is NULL
+         AND key_req_id IS NULL
    GROUP BY cluster
    ORDER BY cluster_count
      DESC
-   LIMIT 1) c on c.cluster = r.cluster
+   LIMIT 1) c ON c.cluster = r.cluster
 LIMIT 20;
+
+SELECT
+  ks.id,
+  ks.name,
+  count(vk.vacancy_id) AS count
+FROM key_skills ks
+  JOIN vacancy_to_key vk ON ks.id = vk.key_id
+WHERE ks.name not LIKE '%1С%'
+GROUP BY ks.name
+HAVING count(vk.vacancy_id) < 78
+ORDER BY count
+  DESC;
+
+
+INSERT INTO vacancy_to_key_req (vacancy_id, key_id, checked)
+  SELECT
+    DISTINCT
+    vk.vacancy_id,
+    91 AS key_id,
+    1
+  FROM vacancy_to_key vk
+  WHERE vk.key_id = 101
+        AND vk.vacancy_id NOT IN (
+    SELECT vacancy_id
+    FROM vacancy_to_key_req
+    WHERE key_id = 91
+  );
+
+SELECT count(*)
+FROM vacancy_to_key
+WHERE key_id = 3;
+
+
+SELECT count(*)
+FROM vacancy_to_key_req;
+
+
