@@ -138,6 +138,11 @@ class VacancyToKeyReq(Base):
     key_id = Column(Integer, ForeignKey('key_requirement.id'), primary_key=True)
     checked = Column('checked', Boolean)
 
+    def __init__(self, vacancy_id, key_id, checked=False):
+        self.vacancy_id = vacancy_id
+        self.key_id = key_id
+        self.checked = checked
+
 
 if __name__ == '__main__':
     Base.metadata.create_all(engine)
