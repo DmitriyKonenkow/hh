@@ -40,8 +40,8 @@ SELECT count(*)
 FROM requirements;
 
 UPDATE status_parse
-SET status = 3
-WHERE status = 2;
+SET status = 2
+WHERE status = 3;
 
 SELECT
   r.requirement,
@@ -189,3 +189,8 @@ WHERE description like '%maven%'
 );
 
 
+SELECT v.id, kr.name
+FROM vacancies v
+  JOIN vacancy_to_key_req vkr on v.id = vkr.vacancy_id
+  JOIN key_requirement kr on vkr.key_id = kr.id
+WHERE v.id = 3500642;
