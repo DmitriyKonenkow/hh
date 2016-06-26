@@ -194,3 +194,17 @@ FROM vacancies v
   JOIN vacancy_to_key_req vkr on v.id = vkr.vacancy_id
   JOIN key_requirement kr on vkr.key_id = kr.id
 WHERE v.id = 3500642;
+
+
+SELECT kr.name, count(DISTINCT vkr.vacancy_id) as count, round(avg(v.salary_from)/1000)||'00'
+FROM vacancy_to_key_req vkr
+JOIN key_requirement kr ON vkr.key_id = kr.id
+  JOIN vacancies v on vkr.vacancy_id = v.id
+  JOIN vacancy_to_key_req vkr2 on vkr.vacancy_id = vkr2.vacancy_id
+  JOIN key_requirement kr2 on vkr2.key_id = kr2.id
+  WHERE
+    kr2.name = 'java'
+  and v.salary_from is NOT NULL
+  and v.salary_cur = 'RUR'
+GROUP BY vkr.key_id
+ORDER BY count DESC ;
